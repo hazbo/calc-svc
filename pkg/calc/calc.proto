@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+package calc;
+
+service Calculator {
+	rpc Sum(SumRequest) returns (SumResponse) {}
+	rpc Mul(MulRequest) returns (MulResponse) {}
+	rpc Div(DivRequest) returns (DivResponse) {}
+}
+
+message SumRequest {
+	sint64 x = 1;
+	sint64 y = 2;
+}
+
+message SumResponse {
+	sint64 z = 1;
+}
+
+message MulRequest {
+	sint64 x = 1;
+	sint64 y = 2;
+}
+
+message MulResponse {
+	sint64 z = 1;
+}
+
+message DivRequest {
+	double x = 1;
+	double y = 2;
+}
+
+message DivResponse {
+	double z = 1;
+}

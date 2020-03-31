@@ -1,0 +1,39 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/golang:1.13.4
+
+    working_directory: /go/src/github.com/hazbo/calc-svc
+    steps:
+      # Grab a copy of the code
+      - checkout
+
+      # Perform tests
+      - run: go test -mod vendor -v ./...
+
+      # Setup Docker
+      - setup_remote_docker:
+          docker_layer_caching: false
+
+      # Authenticate with the Docker Hub using credentials in CircleCI
+      - run:
+          name: Docker Authenticate
+          command: |
+            echo "$DOCKER_PASSWORD" |  \
+              docker login --username $DOCKER_USERNAME --password-stdin
+
+      # Pull the golang image to build the app according to the Dockerfile in
+      # ./build/package/calc-svc/Dockerfile
+      - run:
+          name: Build App and Image
+          command: |
+            docker build \
+              -t hazbo/calc-svc \
+              -f ./build/package/calc-svc/Dockerfile .
+
+      # Once the build has finished, push the image to the Dockerhub
+      - run:
+          name: Push Docker Image
+          command: |
+            docker push hazbo/calc-svc
